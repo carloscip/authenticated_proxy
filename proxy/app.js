@@ -13,14 +13,16 @@ const REDIRECT_URL = REDIRECT_PORT ? REDIRECT_HOST + `:${REDIRECT_PORT}` : REDIR
 // App
 const app = express();
 
-app.get('*', async (req, res) => {
+app.all('*', async (req, res) => {
+  console.log(`${req.protocol}://${req.get('host')}${req.originalUrl}`)
   let path = req.path
   let method = req.method
   let headers = req.headers
   let data = req.data
   let token = ''
-  if (headers['authorization'] || headers['x-algo-api-token']) {
+  if (headers['authorization'] || headers['x-algo-api-token'] || headers['algo_api_key']) {
     if (headers['authorization']) token = headers['authorization'].split(' ')[1]
+    if (headers['algo_api_key']) headers['x-algo-api-token'] = headers['algo_api_key']
     if (headers['x-algo-api-token']) token = headers['x-algo-api-token']
     if (token == VALID_TKN) {
       try {

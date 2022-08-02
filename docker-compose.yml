@@ -9,3 +9,10 @@ services:
     ports:
       - ${PORT}:${PORT:-8080}
     restart: unless-stopped
+#    networks:
+#      - shared-network
+
+#networks:
+#  shared-network:
+#    external:
+#      name: custom_network
