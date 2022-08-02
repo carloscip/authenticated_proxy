@@ -25,7 +25,9 @@ app.use(limiter) // enable rate limit on every endpoint
 
 // Routes
 app.all('*', async (req, res) => {
-  console.log(`${req.protocol}://${req.get('host')}${req.originalUrl}`)
+  try {
+    console.log(`${req.method}: ${req.protocol}://${req.get('host')}${req.originalUrl} - HEADERS: ${JSON.stringify(req.headers)}`)
+  } catch(err) {}
   let path = req.path
   let method = req.method
   let headers = req.headers
