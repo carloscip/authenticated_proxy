@@ -13,8 +13,8 @@ const REDIRECT_URL = REDIRECT_PORT ? REDIRECT_HOST + `:${REDIRECT_PORT}` : REDIR
 
 // Rate limit
 const limiter = rateLimit({
-	windowMs: 15 * 60 * 1000, // 15 minutes
-	max: 100, // Limit each IP to 100 requests per `window` (here, per 15 minutes)
+	windowMs: 60 * 1000, // 60 secs
+	max: 30, // Limit each IP to 20 requests per `window` (here, per 1 second)
 	standardHeaders: true, // Return rate limit info in the `RateLimit-*` headers
 	legacyHeaders: false, // Disable the `X-RateLimit-*` headers
 })
@@ -33,9 +33,9 @@ app.all('*', async (req, res) => {
   let headers = req.headers
   let data = req.data
   let token = ''
-  if (headers['authorization'] || headers['x-algo-api-token'] || headers['algo_api_key']) {
+  if (headers['authorization'] || headers['x-algo-api-token'] || headers['x-api-key']) {
     if (headers['authorization']) token = headers['authorization'].split(' ')[1]
-    if (headers['algo_api_key']) headers['x-algo-api-token'] = headers['algo_api_key']
+    if (headers['x-api-key']) headers['x-algo-api-token'] = headers['x-api-key']
     if (headers['x-algo-api-token']) token = headers['x-algo-api-token']
     if (token == VALID_TKN) {
       try {
