@@ -2,6 +2,7 @@ require('dotenv').config()
 const express = require('express');
 const axios = require('axios')
 const rateLimit = require('express-rate-limit')
+const bodyParser = require('body-parser');
 
 // Constants
 const PORT = process.env.PORT ? process.env.PORT : 80;
@@ -22,6 +23,10 @@ const limiter = rateLimit({
 // App
 const app = express()
 app.use(limiter) // enable rate limit on every endpoint
+app.use(bodyParser.text());
+app.use(bodyParser.urlencoded({ extended: true }));
+app.use(bodyParser.raw());
+app.use(bodyParser.json());
 
 // Routes
 app.all('*', async (req, res) => {
@@ -31,7 +36,7 @@ app.all('*', async (req, res) => {
   let path = req.path
   let method = req.method
   let headers = req.headers
-  let data = req.data
+  let data = req.body
   let token = ''
   if (headers['authorization'] || headers['x-algo-api-token'] || headers['x-api-key']) {
     if (headers['authorization']) token = headers['authorization'].split(' ')[1]
@@ -41,6 +46,12 @@ app.all('*', async (req, res) => {
       try {
         let full_url = REDIRECT_URL + path
         let { data: resp } = await axios({
+          method: method,
+          url: full_url,
+          data: data,
+          headers: headers
+        })
+        console.log({
           method: method,
           url: full_url,
           data: data,
